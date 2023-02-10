@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module MiniviteRb
+module MiniviteRails
   class Configuration
     class Error < StandardError; end
 

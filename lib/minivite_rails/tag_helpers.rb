@@ -6,7 +6,7 @@ require 'action_view'
 # https://github.com/ElMassimo/vite_ruby/blob/main/vite_rails/lib/vite_rails/tag_helpers.rb
 
 # Public: Allows to render HTML tags for scripts and styles processed by Vite.
-module MiniviteRb::TagHelpers
+module MiniviteRails::TagHelpers
   # Public: Renders a script tag for vite/client to enable HMR in development.
   def vite_client_tag(**options)
     return unless src = vite_manifest.vite_client_src
@@ -84,7 +84,7 @@ private
 
   # Internal: Returns the current manifest loaded by Vite Ruby.
   def vite_manifest
-    MiniviteRb.manifest
+    MiniviteRails.manifest
   end
 
   # Internal: Renders a modulepreload link tag.

@@ -2,11 +2,11 @@
 
 
 
-module MiniviteRb
-  require 'minivite_rb/configuration'
-  require 'minivite_rb/manifest'
-  require 'minivite_rb/tag_helpers'
-  require 'minivite_rb/version'
+module MiniviteRails
+  require 'minivite_rails/configuration'
+  require 'minivite_rails/manifest'
+  require 'minivite_rails/tag_helpers'
+  require 'minivite_rails/version'
 
   class << self
     def configuration(&block)
@@ -28,5 +28,5 @@ end
 
 require 'active_support/lazy_load_hooks'
 ActiveSupport.on_load :action_view do
-  ::ActionView::Base.send :include, MiniviteRb::TagHelpers
+  ::ActionView::Base.send :include, MiniviteRails::TagHelpers
 end

@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
 require 'json'
-require 'uri'
+require 'active_support/core_ext/object/blank'
+require 'rails'
 
-module MiniviteRb
+module MiniviteRails
   class Manifest
     class FileNotFoundError < StandardError; end
     class MissingEntryError < StandardError; end
@@ -17,7 +18,7 @@ module MiniviteRb
 
     def data
       return load_manifest unless config.cache
-      @data ||=  load_manifest
+      @data ||= load_manifest
     end
 
     def path_for(name, **options)
@@ -57,7 +58,7 @@ module MiniviteRb
     protected 
 
     def dev_server_available?
-      !config.vite_dev_server.nil? && !config.vite_dev_server.empty?
+      !Rails.env.production? && config.vite_dev_server.present?
     end
 
     def load_manifest
@@ -74,7 +75,8 @@ module MiniviteRb
     end
 
     def prefix_vite_asset(path)
-      File.join(config.vite_dev_server || '/', config.public_output_path, path)
+      root_path = dev_server_available? ? config.vite_dev_server : '/'
+      File.join(root_path, config.public_output_path, path)
     end
   
     # Internal: Resolves the paths that reference a manifest entry.

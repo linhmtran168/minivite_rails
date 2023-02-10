@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
+require 'rails'
 
-RSpec.describe MiniviteRb::Manifest do
+RSpec.describe MiniviteRails::Manifest do
   describe '.new' do
     subject { described_class.new(config) }
 
-    let(:config) { MiniviteRb::Configuration.new }
+    let(:config) { MiniviteRails::Configuration.new }
 
     it { is_expected.to be_a described_class }
   end
@@ -14,7 +15,7 @@ RSpec.describe MiniviteRb::Manifest do
   describe '#data' do
     subject { described_class.new(config).data }
 
-    let(:config) { MiniviteRb::Configuration.new }
+    let(:config) { MiniviteRails::Configuration.new }
 
     context 'when manifest_path is valid' do
       before do
@@ -28,7 +29,7 @@ RSpec.describe MiniviteRb::Manifest do
       before { config.manifest_path = File.join(__dir__, '/invalid_path') }
 
       it do
-        expect { subject }.to raise_error(MiniviteRb::Manifest::FileNotFoundError)
+        expect { subject }.to raise_error(MiniviteRails::Manifest::FileNotFoundError)
       end
     end
   end
@@ -37,9 +38,10 @@ RSpec.describe MiniviteRb::Manifest do
     subject { described_class.new(config).path_for(name, **options) }
 
     let(:config) do
-      config = MiniviteRb::Configuration.new
-      config.manifest_path = File.join(__dir__, '../support/files/manifest-assets.json')
-      config
+      MiniviteRails::Configuration.new.tap do |c|
+        c.manifest_path = File.join(__dir__, '../support/files/manifest-assets.json')
+        c.cache = false
+      end
     end
 
     let(:options) { {} }
@@ -48,14 +50,14 @@ RSpec.describe MiniviteRb::Manifest do
       let(:name)  { 'invalid_name' }
 
       it do 
-        expect { subject }.to raise_error(MiniviteRb::Manifest::MissingEntryError)
+        expect { subject }.to raise_error(MiniviteRails::Manifest::MissingEntryError)
       end
     end
 
     context 'when file name exists' do
-      context 'without entry type' do
-        let(:name) { 'entrypoints/app.css' }
+      let(:name) { 'entrypoints/app.css' }
 
+      context 'without entry type' do
         it { is_expected.to eq '/public/assets/app.517bf154.css' }
       end
 
@@ -67,11 +69,19 @@ RSpec.describe MiniviteRb::Manifest do
       end
 
       context 'with dev server available' do
-        let(:name) { 'entrypoints/app.css' }
-
         before { config.vite_dev_server = 'http://localhost:3000' }
 
         it { is_expected.to eq 'http://localhost:3000/public/entrypoints/app.css' }
+      end
+
+      context 'with dev server available but production environment' do
+        before do
+          config.vite_dev_server = 'http://localhost:3000'
+          Rails.env = 'production'
+        end
+        after { Rails.env = 'development' }
+
+        it { is_expected.to eq '/public/assets/app.517bf154.css' }
       end
     end
   end
@@ -79,7 +89,7 @@ RSpec.describe MiniviteRb::Manifest do
   describe '#vite_client_src' do
     subject { described_class.new(config).vite_client_src }
     
-    let(:config) { MiniviteRb::Configuration.new }
+    let(:config) { MiniviteRails::Configuration.new }
 
     context 'when dev server is available' do
       before { config.vite_dev_server = 'http://localhost:3000' }
@@ -96,7 +106,7 @@ RSpec.describe MiniviteRb::Manifest do
     subject { described_class.new(config).resolve_entries(name) }
 
     let(:config) do
-      config = MiniviteRb::Configuration.new
+      config = MiniviteRails::Configuration.new
       config.manifest_path = File.join(__dir__, '../support/files/manifest.json')
       config
     end
@@ -105,7 +115,7 @@ RSpec.describe MiniviteRb::Manifest do
       let(:name) { 'invalid_name' }
 
       it do
-        expect { subject }.to raise_error(MiniviteRb::Manifest::MissingEntryError)
+        expect { subject }.to raise_error(MiniviteRails::Manifest::MissingEntryError)
       end
     end
 

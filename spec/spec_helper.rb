@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "minivite_rb"
+require "minivite_rails"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
-require_relative "lib/minivite_rb/version"
+require_relative "lib/minivite_rails/version"
 
 Gem::Specification.new do |spec|
-  spec.name = "minivite_rb"
-  spec.version = MiniviteRb::VERSION
+  spec.name = "minivite_rails"
+  spec.version = MiniviteRails::VERSION
   spec.authors = ["Linh Tran"]
   spec.email = ["linh.mtran168@live.com"]
 
   spec.summary = "Minivite Ruby Gem"
   spec.description = spec.summary
-  spec.homepage = "https://github.com/linhmtran168/minivite_rb"
+  spec.homepage = "https://github.com/linhmtran168/minivite_rails"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 2.7.0"
 
@@ -30,6 +30,7 @@ Gem::Specification.new do |spec|
   
 
   spec.add_dependency "actionview", ">= 6.0.0"
+  spec.add_dependency "railties", ">= 6.0.0"
 
   spec.add_development_dependency "rake", "~> 13.0"
   spec.add_development_dependency "rspec", "~> 3.0"
