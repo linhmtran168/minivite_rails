@@ -12,8 +12,13 @@ module MiniviteRails
     attr_reader :config, :manifest_path
 
     def initialize(config)
+      update_config(config)
+    end
+
+    def update_config(config)
       @config = config
-      @manifest_path = config.manifest_path
+      @manifest_path = config.manifest_path || File.join(config.public_asset_dir, 'manifest.json')
+      @data = nil
     end
 
     def data
@@ -76,7 +81,7 @@ module MiniviteRails
 
     def prefix_vite_asset(path)
       root_path = dev_server_available? ? config.vite_dev_server : '/'
-      File.join(root_path, config.public_output_path, path)
+      File.join(root_path, config.public_base_path, path)
     end
   
     # Internal: Resolves the paths that reference a manifest entry.

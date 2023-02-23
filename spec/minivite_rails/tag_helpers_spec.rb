@@ -34,7 +34,7 @@ RSpec.describe MiniviteRails::TagHelpers do
 
       it do
         is_expected.to eq(
-          '<script src="http://localhost:3000/public/@vite/client" type="module"></script>'
+          '<script src="http://localhost:3000/vite/@vite/client" type="module"></script>'
         )
       end
     end

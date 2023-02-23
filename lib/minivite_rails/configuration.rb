@@ -21,25 +21,21 @@ module MiniviteRails
     end
 
     # Private
-    config_attr :root_path
     config_attr :id, default: ROOT_DEFAULT_ID
     config_attr :cache, default: false
     # The base directory of the frontend.
-    config_attr :base_path
     config_attr :vite_dev_server
     config_attr :manifest_path
-    config_attr :public_output_path, default: 'public'
+    config_attr :public_base_path, default: '/vite'
+    config_attr :public_dir, default: 'public'
 
     # Initializes a new instance of Configuration class.
     def initialize()
       @config = {}
     end
 
-    # Resolve base_path as an absolute path
-    #
-    # @return [String]
-    def resolved_base_path
-      File.expand_path(base_path || '.', root_path)
+    def public_asset_dir
+      File.expand_path('.', File.join(public_dir, public_base_path))
     end
   end
 end

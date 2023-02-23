@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-
-
 module MiniviteRails
   require 'minivite_rails/configuration'
   require 'minivite_rails/manifest'
@@ -17,7 +15,7 @@ module MiniviteRails
 
     def configuration=(configuration)
       @configuration = configuration
-      @manifest = nil
+      @manifest.update_config(@configuration) if @manifest
     end
 
     def manifest

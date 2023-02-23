@@ -58,20 +58,20 @@ RSpec.describe MiniviteRails::Manifest do
       let(:name) { 'entrypoints/app.css' }
 
       context 'without entry type' do
-        it { is_expected.to eq '/public/assets/app.517bf154.css' }
+        it { is_expected.to eq '/vite/assets/app.517bf154.css' }
       end
 
       context 'with entry type' do
         let(:name) { 'entrypoints/app' }
         let(:options) { { type: :stylesheet } }
 
-        it { is_expected.to eq '/public/assets/app.517bf154.css' }
+        it { is_expected.to eq '/vite/assets/app.517bf154.css' }
       end
 
       context 'with dev server available' do
         before { config.vite_dev_server = 'http://localhost:3000' }
 
-        it { is_expected.to eq 'http://localhost:3000/public/entrypoints/app.css' }
+        it { is_expected.to eq 'http://localhost:3000/vite/entrypoints/app.css' }
       end
 
       context 'with dev server available but production environment' do
@@ -81,7 +81,7 @@ RSpec.describe MiniviteRails::Manifest do
         end
         after { Rails.env = 'development' }
 
-        it { is_expected.to eq '/public/assets/app.517bf154.css' }
+        it { is_expected.to eq '/vite/assets/app.517bf154.css' }
       end
     end
   end
@@ -94,7 +94,7 @@ RSpec.describe MiniviteRails::Manifest do
     context 'when dev server is available' do
       before { config.vite_dev_server = 'http://localhost:3000' }
 
-      it { is_expected.to eq 'http://localhost:3000/public/@vite/client' }
+      it { is_expected.to eq 'http://localhost:3000/vite/@vite/client' }
     end
 
     context 'when dev server is not available' do
@@ -124,9 +124,9 @@ RSpec.describe MiniviteRails::Manifest do
 
       it do
         expect(subject).to eq(
-          imports: ['/public/assets/log.818edfb8.js', '/public/assets/vue.3002ada6.js', '/public/assets/vendor.0f7c0ec3.js'],
-          scripts: ['/public/assets/main.9dcad042.js'],
-          stylesheets: ['/public/assets/app.517bf154.css', '/public/assets/theme.e6d9734b.css', '/public/assets/vue.ec0a97cc.css']
+          imports: ['/vite/assets/log.818edfb8.js', '/vite/assets/vue.3002ada6.js', '/vite/assets/vendor.0f7c0ec3.js'],
+          scripts: ['/vite/assets/main.9dcad042.js'],
+          stylesheets: ['/vite/assets/app.517bf154.css', '/vite/assets/theme.e6d9734b.css', '/vite/assets/vue.ec0a97cc.css']
         )
       end
     end
@@ -139,7 +139,7 @@ RSpec.describe MiniviteRails::Manifest do
       it do
         expect(subject).to eq(
           imports: [],
-          scripts: ['http://localhost:3000/public/entrypoints/main.ts'],
+          scripts: ['http://localhost:3000/vite/entrypoints/main.ts'],
           stylesheets: []
         )
       end
