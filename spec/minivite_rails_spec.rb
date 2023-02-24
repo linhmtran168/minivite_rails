@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe MiniviteRails do
-  it "has a version number" do
+  it 'has a version number' do
     expect(MiniviteRails::VERSION).not_to be nil
   end
 end

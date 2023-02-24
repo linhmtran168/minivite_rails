@@ -49,7 +49,7 @@ RSpec.describe MiniviteRails::Manifest do
     context 'when file name is invalid' do
       let(:name)  { 'invalid_name' }
 
-      it do 
+      it do
         expect { subject }.to raise_error(MiniviteRails::Manifest::MissingEntryError)
       end
     end
@@ -79,6 +79,7 @@ RSpec.describe MiniviteRails::Manifest do
           config.vite_dev_server = 'http://localhost:3000'
           Rails.env = 'production'
         end
+
         after { Rails.env = 'development' }
 
         it { is_expected.to eq '/vite/assets/app.517bf154.css' }
@@ -88,7 +89,7 @@ RSpec.describe MiniviteRails::Manifest do
 
   describe '#vite_client_src' do
     subject { described_class.new(config).vite_client_src }
-    
+
     let(:config) { MiniviteRails::Configuration.new }
 
     context 'when dev server is available' do
@@ -126,7 +127,8 @@ RSpec.describe MiniviteRails::Manifest do
         expect(subject).to eq(
           imports: ['/vite/assets/log.818edfb8.js', '/vite/assets/vue.3002ada6.js', '/vite/assets/vendor.0f7c0ec3.js'],
           scripts: ['/vite/assets/main.9dcad042.js'],
-          stylesheets: ['/vite/assets/app.517bf154.css', '/vite/assets/theme.e6d9734b.css', '/vite/assets/vue.ec0a97cc.css']
+          stylesheets: ['/vite/assets/app.517bf154.css', '/vite/assets/theme.e6d9734b.css',
+                        '/vite/assets/vue.ec0a97cc.css']
         )
       end
     end

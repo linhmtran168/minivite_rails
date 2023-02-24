@@ -7,24 +7,23 @@ module MiniviteRails
   require 'minivite_rails/version'
 
   class << self
-    def configuration(&block)
+    def configuration
       @configuration ||= Configuration.new
       yield @configuration if block_given?
       @configuration
     end
 
-    def configuration=(configuration)
-      @configuration = configuration
-      @manifest.update_config(@configuration) if @manifest
-    end
+    def manifest(id: nil)
+      raise 'MiniviteRails is not configured' if @configuration.nil?
 
-    def manifest
-      @manifest ||= Manifest.new(configuration)
+      return @configuration.manifest if id.nil?
+
+      @configuration.child_by_id(id).manifest
     end
   end
 end
 
 require 'active_support/lazy_load_hooks'
 ActiveSupport.on_load :action_view do
-  ::ActionView::Base.send :include, MiniviteRails::TagHelpers
+  ::ActionView::Base.include MiniviteRails::TagHelpers
 end

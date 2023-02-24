@@ -23,6 +23,7 @@ module MiniviteRails
 
     def data
       return load_manifest unless config.cache
+
       @data ||= load_manifest
     end
 
@@ -37,30 +38,30 @@ module MiniviteRails
     def resolve_entries(*names, **options)
       entries = names.map { |name| lookup!(name, **options) }
       script_paths = entries.map { |entry| entry.fetch('file') }
-  
+
       imports = dev_server_available? ? [] : entries.flat_map { |entry| entry['imports'] }.compact.uniq
       {
         scripts: script_paths,
         imports: imports.map { |entry| entry.fetch('file') }.uniq,
-        stylesheets: dev_server_available? ? [] : (entries + imports).flat_map { |entry| entry['css'] }.compact.uniq,
+        stylesheets: dev_server_available? ? [] : (entries + imports).flat_map { |entry| entry['css'] }.compact.uniq
       }
     end
 
     def react_refresh_preamble
-      if dev_server_available?
-        <<~REACT_REFRESH
-          <script type="module">
-            import RefreshRuntime from '#{ prefix_asset_with_host('@react-refresh') }'
-            RefreshRuntime.injectIntoGlobalHook(window)
-            window.$RefreshReg$ = () => {}
-            window.$RefreshSig$ = () => (type) => type
-            window.__vite_plugin_react_preamble_installed__ = true
-          </script>
-        REACT_REFRESH
-      end
+      return unless dev_server_available?
+
+      <<~REACT_REFRESH
+        <script type="module">
+          import RefreshRuntime from '#{prefix_vite_asset('@react-refresh')}'
+          RefreshRuntime.injectIntoGlobalHook(window)
+          window.$RefreshReg$ = () => {}
+          window.$RefreshSig$ = () => (type) => type
+          window.__vite_plugin_react_preamble_installed__ = true
+        </script>
+      REACT_REFRESH
     end
 
-    protected 
+    protected
 
     def dev_server_available?
       !Rails.env.production? && config.vite_dev_server.present?
@@ -68,9 +69,10 @@ module MiniviteRails
 
     def load_manifest
       u = URI.parse(manifest_path)
-      data = nil  
-      if u.scheme == 'file' || u.path == manifest_path  # file path
+      data = nil
+      if u.scheme == 'file' || u.path == manifest_path # file path
         raise(FileNotFoundError, "#{manifest_path}: no such manifest found") unless File.exist?(manifest_path)
+
         data = File.read(manifest_path)
       else
         # http url
@@ -83,7 +85,7 @@ module MiniviteRails
       root_path = dev_server_available? ? config.vite_dev_server : '/'
       File.join(root_path, config.public_base_path, path)
     end
-  
+
     # Internal: Resolves the paths that reference a manifest entry.
     def resolve_references(manifest)
       manifest.each_value do |entry|
@@ -98,7 +100,7 @@ module MiniviteRails
     def lookup!(name, **options)
       lookup(name, **options) || missing_entry_error(name, **options)
     end
-  
+
     # Internal: Computes the path for a given Vite asset using manifest.json.
     #
     # Returns a relative path, or nil if the asset is not found.
@@ -120,9 +122,9 @@ module MiniviteRails
 
     def resolve_entry_name(name, type: nil)
       return resolve_virtual_entry(name) if type == :virtual
-  
+
       name = with_file_extension(name.to_s, type)
-      raise ArgumentError, "Asset names can not be relative. Found: #{ name }" if name.start_with?('.')
+      raise ArgumentError, "Asset names can not be relative. Found: #{name}" if name.start_with?('.')
 
       # Explicit path, relative to the source_code_dir.
       name.sub(%r{^~/(.+)$}) { return Regexp.last_match(1) }
@@ -133,16 +135,16 @@ module MiniviteRails
     def resolve_virtual_entry(name)
       data.keys.find { |file| file.include?(name) } || name
     end
-  
+
     # Internal: Adds a file extension to the file name, unless it already has one.
     def with_file_extension(name, entry_type)
       if File.extname(name).empty? && (ext = extension_for_type(entry_type))
-        "#{ name }.#{ ext }"
+        "#{name}.#{ext}"
       else
         name
       end
     end
-  
+
     # Internal: Allows to receive :javascript and :stylesheet as :type in helpers.
     def extension_for_type(entry_type)
       case entry_type
@@ -152,14 +154,14 @@ module MiniviteRails
       else entry_type
       end
     end
-  
+
     # Internal: Raises a detailed message when an entry is missing in the manifest.
-    def missing_entry_error(name, **options)
-      raise MissingEntryError,  <<~MSG
-      Can not find #{name} in #{manifest_path}.
-      Your manifest contains:
-      #{JSON.pretty_generate(data)}
-    MSG
+    def missing_entry_error(name, **_options)
+      raise MissingEntryError, <<~MSG
+        Can not find #{name} in #{manifest_path}.
+        Your manifest contains:
+        #{JSON.pretty_generate(data)}
+      MSG
     end
   end
 end
