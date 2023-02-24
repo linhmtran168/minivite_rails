@@ -47,7 +47,7 @@ module MiniviteRails
 
     def reload_manifest
       @manifest&.update_config(self)
-      @children.each_value(&:reload)
+      @children.each_value(&:reload_manifest)
     end
 
     def add(id)
