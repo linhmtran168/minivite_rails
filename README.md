@@ -1,8 +1,13 @@
 # MiniviteRails
 
-TODO: Delete this and the text below, and describe your gem
+MiniviteRails provides minimal integration with [Vite](https://vitejs.dev/) for Rails projects.
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/minivite_rails`. To experiment with that code, run `bin/console` for an interactive prompt.
+__DISCLAIMER:__ This gem is not thoroughly tested and is not yet ready for production use. For battle-tested and full featured integration with Vite for not only Rails but Ruby projects, please check out [vite_ruby](https://vite-ruby.netlify.app/). In fact, this gem reuses a lot of code from [vite_ruby](https://vite-ruby.netlify.app/) and is intended just for my projects' specific use cases that requires full manual control over Vite's configuration and build process.
+
+## Features
+
+* Rails view helpers to resolve paths to assets which are built by Vite (both by Vite's dev server and by Vite's build process).
+* Support multiple configurations for Vite
 
 ## Installation
 

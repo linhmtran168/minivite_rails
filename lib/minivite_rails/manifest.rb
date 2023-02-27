@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# Modified from vite_ruby's source code
+# https://github.com/ElMassimo/vite_ruby/blob/main/vite_ruby/lib/vite_ruby/manifest.rb
+
 require 'json'
 require 'active_support/core_ext/object/blank'
 require 'rails'
