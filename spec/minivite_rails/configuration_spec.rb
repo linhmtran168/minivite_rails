@@ -21,6 +21,7 @@ RSpec.describe MiniviteRails::Configuration do
 
   describe '#child_by_id' do
     subject { config.child_by_id(:sub) }
+
     let(:config) { described_class.new }
 
     context 'when child does not exist' do
@@ -35,7 +36,7 @@ RSpec.describe MiniviteRails::Configuration do
       end
 
       it 'returns correct child' do
-        expect(subject.id). to eq(:sub)
+        expect(subject.id).to eq(:sub)
       end
     end
   end
