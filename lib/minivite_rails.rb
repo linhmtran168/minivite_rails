@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Main entrypoint
 module MiniviteRails
   require 'minivite_rails/configuration'
   require 'minivite_rails/manifest'
@@ -25,5 +26,5 @@ end
 
 require 'active_support/lazy_load_hooks'
 ActiveSupport.on_load :action_view do
-  ::ActionView::Base.include MiniviteRails::TagHelpers
+  ActionView::Base.include MiniviteRails::TagHelpers
 end

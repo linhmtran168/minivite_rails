@@ -162,7 +162,7 @@ MiniviteRails.configuration do |c|
 end
 ```
 
-And the corresponding Vite configuration for admin panel:
+The corresponding Vite configuration for above admin panel:
 
 ```js
 import { fileURLToPath, URL } from 'node:url'
@@ -188,6 +188,8 @@ export default defineConfig({
 })
 
 ```
+
+__Note:__ The sub configuration must have a unique name and it will inherit all the configurations' value from the main configuration.
 
 ## Special Thanks
 

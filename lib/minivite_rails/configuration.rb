@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module MiniviteRails
+  # Class to manage configuration related logics.
   class Configuration
     class Error < StandardError; end
 

@@ -5,8 +5,8 @@ require 'action_view'
 # Use tag helpers from Vite Ruby
 # https://github.com/ElMassimo/vite_ruby/blob/main/vite_rails/lib/vite_rails/tag_helpers.rb
 
-# Public: Allows to render HTML tags for scripts and styles processed by Vite.
 module MiniviteRails
+  # Public: Allows to render HTML tags for scripts and styles processed by Vite.
   module TagHelpers
     # Public: Renders a script tag for vite/client to enable HMR in development.
     def vite_client_tag(id: nil, **options)
@@ -38,7 +38,7 @@ module MiniviteRails
     end
 
     # Public: Renders a <script> tag for the specified Vite entrypoints.
-    def vite_javascript_tag(*names,
+    def vite_javascript_tag(*names, # rubocop:disable Metrics/ParameterLists
                             id: nil,
                             type: 'module',
                             asset_type: :javascript,
