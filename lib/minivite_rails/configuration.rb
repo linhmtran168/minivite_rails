@@ -16,13 +16,12 @@ module MiniviteRails
           end
         end
 
-        define_method("#{prop}=".to_sym) do |v|
+        define_method(:"#{prop}=") do |v|
           @config[prop] = v
         end
       end
     end
 
-    # Private
     config_attr :id, default: ROOT_DEFAULT_ID
     config_attr :cache, default: false
     # The base directory of the frontend.
@@ -51,24 +50,24 @@ module MiniviteRails
       @children.each_value(&:reload_manifest)
     end
 
-    def add(id)
+    def add(child_id)
       raise Error, 'Can only define sub configuration from root config' unless root?
-      raise Error, 'Id already used by root configuration' if id == @config[:id]
+      raise Error, 'Id already used by root configuration' if child_id == id
 
-      @children[id] ||= self.class.new.tap do |c|
+      @children[child_id] ||= self.class.new.tap do |c|
         c.instance_variable_set(:@parent, self)
         c.instance_variable_set(:@children, nil)
-        c.id = id
+        c.id = child_id
         yield c if block_given?
       end
     end
 
-    def child_by_id(id)
+    def child_by_id(child_id)
       raise Error, 'Can only get sub configuration from root config' unless root?
 
-      return self if id == @config[:id] # return itself if id is root id
+      return self if child_id == id # return itself if id is root id
 
-      @children.fetch(id)
+      @children.fetch(child_id)
     rescue KeyError
       raise Error, "No sub configuration with id #{id}"
     end

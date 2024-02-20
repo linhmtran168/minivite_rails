@@ -21,7 +21,7 @@ module MiniviteRails
 
     def update_config(config)
       @config = config
-      @manifest_path = config.manifest_path || File.join(config.public_asset_dir, 'manifest.json')
+      @manifest_path = config.manifest_path || File.join(config.public_asset_dir, '.vite', 'manifest.json')
       @data = nil
     end
 
@@ -33,6 +33,12 @@ module MiniviteRails
 
     def path_for(name, **options)
       lookup!(name, **options).fetch('file')
+    end
+
+    def public_path_for(name)
+      return prefix_vite_asset(name) if dev_server_available?
+
+      File.join(config.public_base_path, name)
     end
 
     def vite_client_src
@@ -51,18 +57,28 @@ module MiniviteRails
       }
     end
 
+    # Public: The content of the preamble needed by the React Refresh plugin.
     def react_refresh_preamble
-      return unless dev_server_available?
+      return unless dev_server_running?
 
       <<~REACT_REFRESH
         <script type="module">
-          import RefreshRuntime from '#{prefix_vite_asset('@react-refresh')}'
-          RefreshRuntime.injectIntoGlobalHook(window)
-          window.$RefreshReg$ = () => {}
-          window.$RefreshSig$ = () => (type) => type
-          window.__vite_plugin_react_preamble_installed__ = true
+          #{react_preamble_code}
         </script>
       REACT_REFRESH
+    end
+
+    # Public: Source script for the React Refresh plugin.
+    def react_preamble_code
+      return unless dev_server_available?
+
+      <<~REACT_PREAMBLE_CODE
+        import RefreshRuntime from '#{prefix_vite_asset('@react-refresh')}'
+        RefreshRuntime.injectIntoGlobalHook(window)
+        window.$RefreshReg$ = () => {}
+        window.$RefreshSig$ = () => (type) => type
+        window.__vite_plugin_react_preamble_installed__ = true
+      REACT_PREAMBLE_CODE
     end
 
     protected
@@ -113,40 +129,28 @@ module MiniviteRails
     #   manifest.lookup('calendar.js')
     #   => { "file" => "/vite/assets/calendar-1016838bab065ae1e122.js", "imports" => [] }
     def lookup(name, **options)
-      find_manifest_entry resolve_entry_name(name, **options)
+      find_manifest_entry(resolve_entry_name(name, **options))
     end
 
     def find_manifest_entry(name)
-      if dev_server_available?
-        { 'file' => prefix_vite_asset(name) }
-      else
-        data[name]
-      end
+      # If dev server is available, we don't need to get manifest entry from the manifest
+      dev_server_available? ? { 'file' => prefix_vite_asset(name) } : data[name]
     end
 
     def resolve_entry_name(name, type: nil)
-      return resolve_virtual_entry(name) if type == :virtual
-
       name = with_file_extension(name.to_s, type)
-      raise ArgumentError, "Asset names can not be relative. Found: #{name}" if name.start_with?('.')
+      if name =~ %r{\A(\.|~|/).+}
+        raise ArgumentError, "Asset names must be direct path from the project root. Found: #{name}"
+      end
 
-      # Explicit path, relative to the source_code_dir.
-      name.sub(%r{^~/(.+)$}) { return Regexp.last_match(1) }
       name
-    end
-
-    # Internal: Resolves a virtual entry by walking all the manifest keys.
-    def resolve_virtual_entry(name)
-      data.keys.find { |file| file.include?(name) } || name
     end
 
     # Internal: Adds a file extension to the file name, unless it already has one.
     def with_file_extension(name, entry_type)
-      if File.extname(name).empty? && (ext = extension_for_type(entry_type))
-        "#{name}.#{ext}"
-      else
-        name
-      end
+      return name unless File.extname(name).empty?
+
+      "#{name}.#{extension_for_type(entry_type)}"
     end
 
     # Internal: Allows to receive :javascript and :stylesheet as :type in helpers.

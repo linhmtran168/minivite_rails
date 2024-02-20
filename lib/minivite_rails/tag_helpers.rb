@@ -9,16 +9,21 @@ module MiniviteRails
   # Public: Allows to render HTML tags for scripts and styles processed by Vite.
   module TagHelpers
     # Public: Renders a script tag for vite/client to enable HMR in development.
-    def vite_client_tag(id: nil, **options)
+    def vite_client_tag(id: nil, crossorigin: 'anonymous', **options)
       src = vite_manifest(id: id).vite_client_src
       return unless src
 
-      javascript_include_tag(src, type: 'module', extname: false, **options)
+      javascript_include_tag(src, type: 'module', extname: false, crossorigin: crossorigin, **options)
     end
 
     # Public: Renders a script tag to enable HMR with React Refresh.
-    def vite_react_refresh_tag(id: nil)
-      vite_manifest(id: id).react_refresh_preamble&.html_safe
+    def vite_react_refresh_tag(id: nil, **options)
+      react_preamble_code = vite_manifest(id: id).react_preamble_code
+      return unless react_preamble_code
+
+      options[:nonce] = true if Rails::VERSION::MAJOR >= 6 && !options.key?(:nonce)
+
+      javascript_tag(react_preamble_code.html_safe, type: :module, **options)
     end
 
     # Public: Resolves the path for the specified Vite asset.
@@ -35,6 +40,14 @@ module MiniviteRails
     #   <%= vite_asset_url 'calendar.css' %> # => "https://example.com/vite/assets/calendar-1016838bab065ae1e122.css"
     def vite_asset_url(name, id: nil, **options)
       url_to_asset vite_manifest(id: id).path_for(name, **options)
+    end
+
+    # Public: Resolves the path for Vite's public assets
+    #
+    # Example:
+    #   <%= vite_public_asset_path 'logo.svg' %> # => "/vite/logo.svg"
+    def vite_public_asset_path(name, id: nil)
+      path_to_asset vite_manifest(id: id).public_path_for(name)
     end
 
     # Public: Renders a <script> tag for the specified Vite entrypoints.
@@ -93,10 +106,14 @@ module MiniviteRails
 
     # Internal: Renders a modulepreload link tag.
     def vite_preload_tag(*sources, crossorigin:, **options)
-      sources.map do |source|
-        href = path_to_asset(source)
-        try(:request).try(:send_early_hints,
-                          'Link' => %(<#{href}>; rel=modulepreload; as=script; crossorigin=#{crossorigin}))
+      asset_paths = sources.map { |source| path_to_asset(source) }
+      try(:request).try(
+        :send_early_hints,
+        'Link' => asset_paths.map do |href|
+          %(<#{href}>; rel=modulepreload; as=script; crossorigin=#{crossorigin})
+        end.join("\n")
+      )
+      asset_paths.map do |href|
         tag.link(rel: 'modulepreload', href: href, as: 'script', crossorigin: crossorigin, **options)
       end.join("\n").html_safe
     end

@@ -7,6 +7,9 @@ AllCops:
 Layout/LineLength:
   Max: 120
 
+Style/Documentation:
+  Enabled: false
+
 Metrics/ClassLength:
   Max: 200
 
