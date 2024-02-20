@@ -1,12 +1,10 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'rails/test_help'
 require_relative '../support/shared_contexts/dev_server'
-require 'debug'
 
 RSpec.describe MiniviteRails::TagHelpers do
-  let(:helper) { ActionController::Base.new.view_context }
+  let(:helper) { ActionView::Base.new({}, {}, '') }
 
   before do
     MiniviteRails.configuration do |c|
