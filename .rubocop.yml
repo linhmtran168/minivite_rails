@@ -3,6 +3,10 @@ require: rubocop-rspec
 AllCops:
   NewCops: enable
   TargetRubyVersion: 3.0
+  Exclude:
+    - 'db/schema.rb'
+    - 'example/bin/*'
+    - 'example/vendor/*'
 
 Layout/LineLength:
   Max: 120
