@@ -10,15 +10,15 @@ module MiniviteRails
   module TagHelpers
     # Public: Renders a script tag for vite/client to enable HMR in development.
     def vite_client_tag(id: nil, crossorigin: 'anonymous', **options)
-      src = vite_manifest(id: id).vite_client_src
+      src = vite_manifest(id:).vite_client_src
       return unless src
 
-      javascript_include_tag(src, type: 'module', extname: false, crossorigin: crossorigin, **options)
+      javascript_include_tag(src, type: 'module', extname: false, crossorigin:, **options)
     end
 
     # Public: Renders a script tag to enable HMR with React Refresh.
     def vite_react_refresh_tag(id: nil, **options)
-      react_preamble_code = vite_manifest(id: id).react_preamble_code
+      react_preamble_code = vite_manifest(id:).react_preamble_code
       return unless react_preamble_code
 
       options[:nonce] = true if Rails::VERSION::MAJOR >= 6 && !options.key?(:nonce)
@@ -31,7 +31,7 @@ module MiniviteRails
     # Example:
     #   <%= vite_asset_path 'calendar.css' %> # => "/vite/assets/calendar-1016838bab065ae1e122.css"
     def vite_asset_path(name, id: nil, **options)
-      path_to_asset vite_manifest(id: id).path_for(name, **options)
+      path_to_asset vite_manifest(id:).path_for(name, **options)
     end
 
     # Public: Resolves the url for the specified Vite asset.
@@ -39,7 +39,7 @@ module MiniviteRails
     # Example:
     #   <%= vite_asset_url 'calendar.css' %> # => "https://example.com/vite/assets/calendar-1016838bab065ae1e122.css"
     def vite_asset_url(name, id: nil, **options)
-      url_to_asset vite_manifest(id: id).path_for(name, **options)
+      url_to_asset vite_manifest(id:).path_for(name, **options)
     end
 
     # Public: Resolves the path for Vite's public assets
@@ -47,7 +47,7 @@ module MiniviteRails
     # Example:
     #   <%= vite_public_asset_path 'logo.svg' %> # => "/vite/logo.svg"
     def vite_public_asset_path(name, id: nil)
-      path_to_asset vite_manifest(id: id).public_path_for(name)
+      path_to_asset vite_manifest(id:).public_path_for(name)
     end
 
     # Public: Renders a <script> tag for the specified Vite entrypoints.
@@ -60,26 +60,26 @@ module MiniviteRails
                             crossorigin: 'anonymous',
                             media: 'screen',
                             **options)
-      entries = vite_manifest(id: id).resolve_entries(*names, type: asset_type)
-      tags = javascript_include_tag(*entries.fetch(:scripts), crossorigin: crossorigin, type: type, extname: false,
+      entries = vite_manifest(id:).resolve_entries(*names, type: asset_type)
+      tags = javascript_include_tag(*entries.fetch(:scripts), crossorigin:, type:, extname: false,
                                                               **options)
-      tags << vite_preload_tag(*entries.fetch(:imports), crossorigin: crossorigin, **options) unless skip_preload_tags
+      tags << vite_preload_tag(*entries.fetch(:imports), crossorigin:, **options) unless skip_preload_tags
 
       options[:extname] = false if Rails::VERSION::MAJOR >= 7
 
-      tags << stylesheet_link_tag(*entries.fetch(:stylesheets), media: media, **options) unless skip_style_tags
+      tags << stylesheet_link_tag(*entries.fetch(:stylesheets), media:, **options) unless skip_style_tags
 
       tags
     end
 
     # Public: Renders a <script> tag for the specified Vite entrypoints.
     def vite_typescript_tag(*names, id: nil, **options)
-      vite_javascript_tag(*names, id: id, asset_type: :typescript, **options)
+      vite_javascript_tag(*names, id:, asset_type: :typescript, **options)
     end
 
     # Public: Renders a <link> tag for the specified Vite entrypoints.
     def vite_stylesheet_tag(*names, id: nil, **options)
-      style_paths = names.map { |name| vite_asset_path(name, id: id, type: :stylesheet) }
+      style_paths = names.map { |name| vite_asset_path(name, id:, type: :stylesheet) }
 
       options[:extname] = false if Rails::VERSION::MAJOR >= 7
 
@@ -90,18 +90,18 @@ module MiniviteRails
     def vite_image_tag(name, id: nil, **options)
       if options[:srcset] && !options[:srcset].is_a?(String)
         options[:srcset] = options[:srcset].map do |src_name, size|
-          "#{vite_asset_path(src_name, id: id)} #{size}"
+          "#{vite_asset_path(src_name, id:)} #{size}"
         end.join(', ')
       end
 
-      image_tag(vite_asset_path(name, id: id), options)
+      image_tag(vite_asset_path(name, id:), options)
     end
 
     private
 
     # Internal: Returns the current manifest loaded by Vite Ruby.
     def vite_manifest(id: nil)
-      MiniviteRails.manifest(id: id)
+      MiniviteRails.manifest(id:)
     end
 
     # Internal: Renders a modulepreload link tag.
@@ -114,7 +114,7 @@ module MiniviteRails
         end.join("\n")
       )
       asset_paths.map do |href|
-        tag.link(rel: 'modulepreload', href: href, as: 'script', crossorigin: crossorigin, **options)
+        tag.link(rel: 'modulepreload', href:, as: 'script', crossorigin:, **options)
       end.join("\n").html_safe
     end
   end
