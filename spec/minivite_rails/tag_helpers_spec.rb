@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
+require_relative '../support/shared_contexts/dev_server'
 
 RSpec.describe MiniviteRails::TagHelpers do
   let(:helper) { ActionView::Base.new({}, {}, '') }
@@ -20,23 +21,11 @@ RSpec.describe MiniviteRails::TagHelpers do
     end
 
     context 'when dev server is available' do
-      before do
-        MiniviteRails.configuration.tap do |c|
-          c.vite_dev_server = 'http://localhost:3000'
-          c.reload_manifest
-        end
-      end
-
-      after do
-        MiniviteRails.configuration.tap do |c|
-          c.vite_dev_server = nil
-          c.reload_manifest
-        end
-      end
+      include_context 'with dev server'
 
       it do
         expect(subject).to eq(
-          '<script src="http://localhost:3000/vite/@vite/client" type="module"></script>'
+          '<script src="http://localhost:3000/vite/@vite/client" crossorigin="anonymous" type="module"></script>'
         )
       end
     end
@@ -50,32 +39,31 @@ RSpec.describe MiniviteRails::TagHelpers do
     end
 
     context 'when dev server is available' do
-      before do
-        MiniviteRails.configuration.tap do |c|
-          c.vite_dev_server = 'http://localhost:3000'
-          c.reload_manifest
-        end
-      end
+      include_context 'with dev server'
 
-      after do
-        MiniviteRails.configuration.tap do |c|
-          c.vite_dev_server = nil
-          c.reload_manifest
-        end
-      end
+      context 'when default nonce is used' do
+        let(:nonce) { SecureRandom.base64(16) }
 
-      it do
-        expect(subject).to eq(
-          <<~REACT_REFRESH
-            <script type="module">
-              import RefreshRuntime from 'http://localhost:3000/vite/@react-refresh'
-              RefreshRuntime.injectIntoGlobalHook(window)
-              window.$RefreshReg$ = () => {}
-              window.$RefreshSig$ = () => (type) => type
-              window.__vite_plugin_react_preamble_installed__ = true
+        before do
+          mocked_nonce = nonce
+          helper.define_singleton_method(:content_security_policy_nonce) { mocked_nonce }
+        end
+
+        it do
+          expected = <<~REACT_REFRESH
+            <script type="module" nonce="#{nonce}">
+            //<![CDATA[
+            import RefreshRuntime from 'http://localhost:3000/vite/@react-refresh'
+            RefreshRuntime.injectIntoGlobalHook(window)
+            window.$RefreshReg$ = () => {}
+            window.$RefreshSig$ = () => (type) => type
+            window.__vite_plugin_react_preamble_installed__ = true
+
+            //]]>
             </script>
           REACT_REFRESH
-        )
+          expect(subject).to eq(expected.strip)
+        end
       end
     end
   end
@@ -84,6 +72,12 @@ RSpec.describe MiniviteRails::TagHelpers do
     subject { helper.vite_asset_path 'entrypoints/main.ts' }
 
     it { is_expected.to eq '/vite/assets/main.9dcad042.js' }
+  end
+
+  describe '#vite_public_asset_path' do
+    subject { helper.vite_public_asset_path 'images/logo.png' }
+
+    it { is_expected.to eq '/vite/images/logo.png' }
   end
 
   describe '#vite_asset_url' do

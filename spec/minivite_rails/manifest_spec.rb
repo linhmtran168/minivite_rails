@@ -54,6 +54,14 @@ RSpec.describe MiniviteRails::Manifest do
       end
     end
 
+    context 'when entry name in wrong format' do
+      let(:name) { '/entrypoints/main.ts' }
+
+      it do
+        expect { subject }.to raise_error(ArgumentError)
+      end
+    end
+
     context 'when file name exists' do
       let(:name) { 'entrypoints/app.css' }
 
@@ -87,6 +95,23 @@ RSpec.describe MiniviteRails::Manifest do
     end
   end
 
+  describe '#public_path_for' do
+    subject { described_class.new(config).public_path_for(name) }
+
+    let(:config) { MiniviteRails::Configuration.new }
+    let(:name) { 'logo.svg' }
+
+    context 'when dev server is available' do
+      before { config.vite_dev_server = 'http://localhost:3000' }
+
+      it { is_expected.to eq 'http://localhost:3000/vite/logo.svg' }
+    end
+
+    context 'when dev server is not available' do
+      it { is_expected.to eq '/vite/logo.svg' }
+    end
+  end
+
   describe '#vite_client_src' do
     subject { described_class.new(config).vite_client_src }
 
@@ -117,6 +142,14 @@ RSpec.describe MiniviteRails::Manifest do
 
       it do
         expect { subject }.to raise_error(MiniviteRails::Manifest::MissingEntryError)
+      end
+    end
+
+    context 'when entry name in wrong format' do
+      let(:name) { '/entrypoints/main.ts' }
+
+      it do
+        expect { subject }.to raise_error(ArgumentError)
       end
     end
 

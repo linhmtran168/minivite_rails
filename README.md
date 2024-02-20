@@ -51,8 +51,8 @@ MiniviteRails.configuration do |c|
   # Vite public directory, default will be `public`
   # c.public_dir, default: 'public'
 
-  # Vite manifest file path, default will be `#{c.public_dir}#{c.public_base_path}/manifest.json`
-  # c.manifest_path = "#{c.public_dir}#{c.public_base_path}/manifest.json"
+  # Vite manifest file path, default will be `#{c.public_dir}#{c.public_base_path}/.vite/manifest.json`
+  # c.manifest_path = "#{c.public_dir}#{c.public_base_path}/.vite/manifest.json"
 end
 ```
 
@@ -90,7 +90,7 @@ Use the following helpers in your Rails views to resolve paths to assets which a
 
 ### `vite_javascript_tag`
 
-Renders a `<script>` tag for the specified Vite js entrypoints. This is the most commonly used helper and will also load needed css entrypoints.
+Renders a `<script>` tag for the specified Vite js entrypoints. This is the most commonly used helper and will also load needed css entrypoints. The entry path must be relative to the root path of Vite project.
 
 ```erb
 <%= vite_javascript_tag 'src/main.js' %>
@@ -136,6 +136,14 @@ Render a path to a specified asset built by Vite
 
 Same as `vite_asset_path` but returns a full URL
 
+### `vite_public_asset_path`
+
+Render a path to a public asset copied by Vite
+
+```erb
+<%= vite_public_asset_path 'logo.svg' %>
+```
+
 ### `vite_image_tag`
 
 Renders an `<img>` tag for the specified Vite image asset
@@ -171,7 +179,7 @@ import react from '@vitejs/plugin-react'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: '/vite_ops/',
+  base: '/vite_admin/',
   plugins: [react()],
   build: {
     manifest: true, // This is required

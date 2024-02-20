@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Application Example</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <link rel="icon" type="image/svg+xml" href="<%= vite_public_asset_path 'vite.svg' %>" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <%= vite_client_tag %>
+    <%= vite_typescript_tag 'src/main.ts', media: 'all' %>
+  </head>
+
+  <body>
+    <%= yield %>
+  </body>
+</html>
