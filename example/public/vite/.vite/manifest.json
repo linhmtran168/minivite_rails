@@ -1,0 +1,14 @@
+{
+  "src/assets/sample.jpeg": {
+    "file": "assets/sample-D0rKnSR8.jpeg",
+    "src": "src/assets/sample.jpeg"
+  },
+  "src/main.ts": {
+    "file": "assets/main-xKirrgEZ.js",
+    "src": "src/main.ts",
+    "isEntry": true,
+    "css": [
+      "assets/main-bAv4l6KH.css"
+    ]
+  }
+}

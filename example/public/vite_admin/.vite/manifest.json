@@ -1,0 +1,21 @@
+{
+  "src/assets/react.svg": {
+    "file": "assets/react-CHdo91hT.svg",
+    "src": "src/assets/react.svg"
+  },
+  "src/assets/sample_2.jpeg": {
+    "file": "assets/sample_2-Q7gwkh7w.jpeg",
+    "src": "src/assets/sample_2.jpeg"
+  },
+  "src/main.tsx": {
+    "file": "assets/main-9YZoQJjb.js",
+    "src": "src/main.tsx",
+    "isEntry": true,
+    "css": [
+      "assets/main-DiwrgTda.css"
+    ],
+    "assets": [
+      "assets/react-CHdo91hT.svg"
+    ]
+  }
+}

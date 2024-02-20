@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Admin Example</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <link rel="icon" type="image/svg+xml" href="<%= vite_public_asset_path 'vite.svg', id: :admin %>" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <%= vite_client_tag id: :admin %>
+    <%= vite_react_refresh_tag id: :admin %>
+    <%= vite_typescript_tag 'src/main.tsx', id: :admin, media: 'all' %>
+  </head>
+
+  <body>
+    <%= yield %>
+  </body>
+</html>
