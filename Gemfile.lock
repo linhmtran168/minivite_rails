@@ -160,7 +160,7 @@ DEPENDENCIES
   rake (~> 13.1)
   rspec (~> 3.13)
   rubocop (~> 1.60)
-  rubocop-rspec (~> 2.22)
+  rubocop-rspec (~> 2.26)
   rubocop-rubycw
   solargraph
 

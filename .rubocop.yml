@@ -4,6 +4,7 @@ AllCops:
   NewCops: enable
   TargetRubyVersion: 3.1
   Exclude:
+    - 'bin/*'
     - 'db/schema.rb'
     - 'example/bin/*'
     - 'example/vendor/*'

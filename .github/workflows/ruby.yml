@@ -11,18 +11,13 @@ permissions:
 
 jobs:
   test:
-
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        ruby-version: ['3.2', '3.3']
 
     steps:
     - uses: actions/checkout@v4
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: ${{ matrix.ruby-version }}
         bundler-cache: true
     - name: Run Rubocop and  test
       run: bundle exec rake
