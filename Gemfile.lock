@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     minivite_rails (0.2.0)
-      railties (>= 6.0)
+      railties (>= 6.0, < 8)
 
 GEM
   remote: https://rubygems.org/

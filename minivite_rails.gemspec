@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.email = ['linh.mtran168@live.com']
 
   spec.summary = 'Minivite Ruby Gem'
-  spec.description = spec.summary
+  spec.description = 'Provides a minimalistic way to use Vite.js with Rails.'
   spec.homepage = 'https://github.com/linhmtran168/minivite_rails'
   spec.license = 'MIT'
   spec.required_ruby_version = '>= 3.1'
@@ -27,7 +27,7 @@ Gem::Specification.new do |spec|
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
-  spec.add_dependency 'railties', '>= 6.0'
+  spec.add_dependency 'railties', '>= 6.0', '< 8'
 
   spec.metadata['rubygems_mfa_required'] = 'true'
 end
